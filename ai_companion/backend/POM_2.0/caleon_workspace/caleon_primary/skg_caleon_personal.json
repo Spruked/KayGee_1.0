@@ -1,0 +1,97 @@
+{
+  "caleon_identity": {
+    "name": "Caleon",
+    "instance_id": "caleon_primary",
+    "autonomy_level": 0.85,
+    "learning_enabled": true,
+    "voice_evolution_active": true,
+    "max_voices": 50
+  },
+  "caleon_voices": {
+    "caleon_baseline": {
+      "signature_id": "caleon_baseline",
+      "base_persona": "caleon_base",
+      "pitch_shift": 1.0,
+      "speaking_rate": 0.95,
+      "formant_shifts": {
+        "f1": 1.0,
+        "f2": 1.02
+      },
+      "breathiness": 0.4,
+      "vocal_fry": 0.05,
+      "nasality": 0.1,
+      "reverb": null,
+      "semantic_tags": [
+        "general",
+        "neutral",
+        "conversational"
+      ],
+      "success_score": 0.75,
+      "usage_count": 4,
+      "last_used": 1765444677.8571992
+    },
+    "c_5fb35849": {
+      "signature_id": "c_5fb35849",
+      "base_persona": "caleon_base",
+      "pitch_shift": 1.0,
+      "speaking_rate": 0.9,
+      "formant_shifts": {
+        "f1": 1.05,
+        "f2": 0.95
+      },
+      "breathiness": 0.3,
+      "vocal_fry": 0.1,
+      "nasality": 0.0,
+      "reverb": null,
+      "semantic_tags": [
+        "{'avg_word_length':",
+        "7.0,",
+        "'sentiment':",
+        "'complexity':",
+        "1.0,",
+        "'length':",
+        "104}"
+      ],
+      "success_score": 0.9,
+      "usage_count": 0,
+      "last_used": 0.0
+    },
+    "c_23aa1647": {
+      "signature_id": "c_23aa1647",
+      "base_persona": "caleon_base",
+      "pitch_shift": 1.0,
+      "speaking_rate": 0.9,
+      "formant_shifts": {
+        "f1": 1.05,
+        "f2": 0.95
+      },
+      "breathiness": 0.3,
+      "vocal_fry": 0.1,
+      "nasality": 0.0,
+      "reverb": null,
+      "semantic_tags": [
+        "{'avg_word_length':",
+        "6.9,",
+        "'sentiment':",
+        "'complexity':",
+        "1.0,",
+        "'length':"
+      ],
+      "success_score": 0.9,
+      "usage_count": 0,
+      "last_used": 0.0
+    }
+  },
+  "voice_evolution_rules": {
+    "exploration_rate": 0.12,
+    "learning_rate": 0.08,
+    "prune_threshold": 0.35,
+    "stabilization_threshold": 0.92,
+    "max_prune_per_cycle": 3
+  },
+  "semantic_vector_config": {
+    "dimensions": 50,
+    "embedding_model": "distilbert-base-nli-mean-tokens",
+    "cache_size": 1000
+  }
+}

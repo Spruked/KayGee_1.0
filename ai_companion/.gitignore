@@ -1,0 +1,65 @@
+# .gitignore for Vaulted Reasoner
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Data and Logs
+data/
+*.db
+*.db-journal
+*.log
+trace_vault/
+*.jsonl
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keys (NEVER commit real keys)
+keys.json
+*.key
+*.pem
+
+# Temporary
+*.tmp
+temp/

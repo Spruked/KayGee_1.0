@@ -1,0 +1,1 @@
+"""Empty federation module init"""

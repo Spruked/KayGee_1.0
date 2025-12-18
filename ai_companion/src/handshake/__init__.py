@@ -1,0 +1,1 @@
+"""Empty handshake module init"""

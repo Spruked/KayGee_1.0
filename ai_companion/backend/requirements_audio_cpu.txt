@@ -1,0 +1,33 @@
+# KayGee Backend - CPU-Only Audio Dependencies
+# No NVIDIA/CUDA packages
+
+# Core FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+websockets==12.0
+python-multipart==0.0.6
+
+# Cochlear Processor Dependencies (CPU-only)
+numpy>=1.21.0
+scipy>=1.7.0
+librosa>=0.9.0
+soundfile>=0.10.0
+audioread>=3.0.0
+
+# POM Dependencies (CPU-only)
+# TTS with CPU-only PyTorch
+torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+torchaudio>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+TTS>=0.22.0
+sounddevice>=0.4.4
+pydub>=0.25.1
+
+# Configuration
+pyyaml>=6.0
+dataclasses-json>=0.5.0
+python-dotenv>=0.19.0
+
+# Visualization
+matplotlib>=3.5.0
+pillow>=9.0.0

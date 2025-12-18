@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  kaygee:
+    build: .
+    container_name: kaygee-1.0
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAYGEE_ENV=production
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - kaygee-network
+
+  kaygee-dashboard:
+    build: .
+    container_name: kaygee-dashboard
+    command: python dashboard/kg_voice_dashboard.py
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - kaygee
+    networks:
+      - kaygee-network
+
+networks:
+  kaygee-network:
+    driver: bridge
+
+volumes:
+  kaygee-data:
+  kaygee-logs:

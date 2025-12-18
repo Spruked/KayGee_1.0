@@ -1,0 +1,9 @@
+{
+  "name": "Phonitory Output Module",
+  "description": "Symbolic voice box: converts structured meaning into voiced expression using Coqui TTS.",
+  "version": "0.1.0",
+  "author": "Your Name",
+  "lineage": ["Cochlear Processor"],
+  "symbolic_role": "speech_output",
+  "callable": true
+}

@@ -1,0 +1,42 @@
+# Vaulted Reasoner Configuration
+# DO NOT modify philosophical weights - they are immutable in A Priori Vault
+
+system:
+  name: "Vaulted Reasoner"
+  version: "1.0.0"
+  mode: "development"
+
+components:
+  perception:
+    enabled: true
+    semantic_vector_dims: 5
+  memory:
+    a_priori_path: "data/a_priori_vault.db"
+    a_posteriori_path: "data/a_posteriori_vault.db"
+    trace_path: "data/trace_vault"
+  reasoning:
+    max_recursion_depth: 5
+    min_ethical_threshold: 0.7
+    prolog_modules:
+      - "src/reasoning/kant.pl"
+      - "src/reasoning/locke.pl"
+      - "src/reasoning/spinoza.pl"
+      - "src/reasoning/hume.pl"
+      - "src/reasoning/master_kg.pl"
+  learning:
+    consolidation_interval: 86400  # 24 hours in seconds
+    min_cases_for_induction: 5
+    rule_confidence_threshold: 0.7
+  articulation:
+    default_prosody:
+      pitch: "normal"
+      rate: "medium"
+      volume: "medium"
+
+handshake:
+  timeout: 0.5  # 500ms
+  retry_attempts: 3
+
+logging:
+  level: "INFO"
+  file: "ai_companion.log"
