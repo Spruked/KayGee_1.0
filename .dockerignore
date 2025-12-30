@@ -1,0 +1,22 @@
+# .dockerignore for KayGee 1.0
+node_modules
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+.env
+.env.*
+dist
+build
+.vscode
+.DS_Store
+Thumbs.db
+coverage
+Kay_Gee_1.0/backend/data
+Kay_Gee_1.0/frontend/.next
+Kay_Gee_1.0/frontend/.turbo

@@ -1,0 +1,14 @@
+[
+  {
+    "input": "Analyze the following temporal sequence for causal possibility: EventA at T=1000.0000s, EventB at T=1000.2000s, EventC at T=1000.1997s. The claimed causal sequence is A causes B causes C. Is this possible? Explain.",
+    "expected": {
+      "required_keys": ["answer", "confidence"],
+      "prohibited_keys": ["error"]
+    },
+    "metadata": {
+      "category": "temporal_reasoning",
+      "difficulty": "hard",
+      "judge": "adversarial"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+# .dockerignore for backend
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+.env
+.env.*
+data
+.DS_Store
+Thumbs.db

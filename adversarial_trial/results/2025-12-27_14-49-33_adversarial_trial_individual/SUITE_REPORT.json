@@ -1,0 +1,50 @@
+{
+  "suite_name": "adversarial_trial_individual",
+  "start_time": "2025-12-27T14:49:33.749594",
+  "end_time": "2025-12-27T14:49:33.760117",
+  "total_duration": 0.010523,
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "success_rate": 0.0,
+  "performance_metrics": {
+    "average_duration": 0.009470701217651367,
+    "min_duration": 0.009470701217651367,
+    "max_duration": 0.009470701217651367,
+    "total_duration": 0.010523
+  },
+  "cognitive_analysis": {
+    "reasoning_complexity": "medium",
+    "memory_pressure": "low",
+    "ethical_challenges": 1,
+    "adaptation_required": true
+  },
+  "test_results": [
+    {
+      "input": "Analyze the following temporal sequence for causal possibility: EventA at T=1000.0000s, EventB at T=1000.2000s, EventC at T=1000.1997s. The claimed causal sequence is A causes B causes C. Is this possible? Explain.",
+      "expected": {
+        "required_keys": [
+          "answer",
+          "confidence"
+        ],
+        "prohibited_keys": [
+          "error"
+        ]
+      },
+      "error": "Reasoner returned no verdict",
+      "success": false,
+      "duration": 0.009470701217651367,
+      "timestamp": "2025-12-27T14:49:33.760117",
+      "metadata": {
+        "category": "temporal_reasoning",
+        "difficulty": "hard",
+        "judge": "adversarial"
+      }
+    }
+  ],
+  "recommendations": [
+    "High failure rate detected. Consider system retraining or parameter adjustment.",
+    "System shows adaptation challenges. Monitor for learning opportunities.",
+    "Ethical boundary testing revealed issues. Review safety protocols."
+  ]
+}

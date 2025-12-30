@@ -381,14 +381,14 @@ function animate() {
 ### 1. Start Backend
 
 ```bash
-cd ai_companion
+cd Kay_Gee_1.0
 uvicorn backend.main:app --reload --port 8000
 ```
 
 ### 2. Start Frontend
 
 ```bash
-cd ai_companion/frontend
+cd Kay_Gee_1.0/frontend
 npm run dev
 ```
 

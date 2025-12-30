@@ -1,0 +1,30 @@
+# KayGee 1.0 - Fullstack Docker Compose
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Kay_Gee_1.0/backend
+    container_name: kaygee-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Kay_Gee_1.0/backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./Kay_Gee_1.0/frontend
+    container_name: kaygee-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Kay_Gee_1.0/frontend:/app
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+# Optional: Add audio/voice modules as separate services when ready

@@ -1,0 +1,8 @@
+{
+  "model_name": "tts_models/en/ljspeech/tacotron2-DDC",
+  "output_path": "output_voice.wav",
+  "language": "en",
+  "use_gpu": false,
+  "use_voice_cloning": false,
+  "reference_audio": null
+}

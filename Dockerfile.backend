@@ -1,0 +1,13 @@
+# KayGee 1.0 Backend Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY Kay_Gee_1.0/backend/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY Kay_Gee_1.0/backend .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

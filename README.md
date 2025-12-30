@@ -18,7 +18,7 @@ KayGee 1.0 is a next-generation, bio-inspired cognitive presence and dashboard. 
 ## Quick Start
 1. **Install dependencies**
    ```sh
-   cd ai_companion/frontend
+   cd Kay_Gee_1.0/frontend
    npm install
    ```
 2. **Run the dashboard**
@@ -32,8 +32,8 @@ KayGee 1.0 is a next-generation, bio-inspired cognitive presence and dashboard. 
    ```
 
 ## Project Structure
-- `ai_companion/frontend/` — React/Vite/Three.js dashboard
-- `ai_companion/backend/` — FastAPI backend (planned: live data, audio, websocket)
+- `Kay_Gee_1.0/frontend/` — React/Vite/Three.js dashboard
+- `Kay_Gee_1.0/backend/` — FastAPI backend (planned: live data, audio, websocket)
 - `visualization/` — Space field generator (Python)
 
 ## License

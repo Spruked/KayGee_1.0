@@ -1,0 +1,67 @@
+[
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.988 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.4751003756647799,
+    "philosopher_weights": {
+      "kant": 0.18306505491478284,
+      "hume": 0.5567248053415182,
+      "locke": 0.17230355724469987,
+      "spinoza": 0.9883080851581186
+    },
+    "query_count": 731,
+    "first_discovered": "2025-12-19T16:13:42.995033",
+    "promoted_to_seed": true
+  },
+  {
+    "principle": "Harmonic Convergence Principle: When 4 philosophical frameworks achieve simultaneous high resonance {'kant': 0.7433718170153091, 'hume': 0.9622555261566885, 'locke': 0.754978184966495, 'spinoza': 0.7496482974096005}, emergent ethical truth emerges through integrated synthesis, achieving universal resonance score of 0.803.",
+    "resonance_score": 0.8025634563870233,
+    "philosopher_weights": {
+      "kant": 0.7433718170153091,
+      "hume": 0.9622555261566885,
+      "locke": 0.754978184966495,
+      "spinoza": 0.7496482974096005
+    },
+    "query_count": 625,
+    "first_discovered": "2025-12-19T16:13:43.023893",
+    "promoted_to_seed": true
+  },
+  {
+    "principle": "Harmonic Convergence Principle: When 3 philosophical frameworks achieve simultaneous high resonance {'kant': 0.7073797314977037, 'hume': 0.9653729804338281, 'locke': 0.6308700488099689, 'spinoza': 0.7777487431799762}, emergent ethical truth emerges through integrated synthesis, achieving universal resonance score of 0.770.",
+    "resonance_score": 0.7703428759803692,
+    "philosopher_weights": {
+      "kant": 0.7073797314977037,
+      "hume": 0.9653729804338281,
+      "locke": 0.6308700488099689,
+      "spinoza": 0.7777487431799762
+    },
+    "query_count": 1247,
+    "first_discovered": "2025-12-19T16:13:43.027447",
+    "promoted_to_seed": true
+  },
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.975 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.6119922355910702,
+    "philosopher_weights": {
+      "kant": 0.5584572742640165,
+      "hume": 0.669632653004635,
+      "locke": 0.2810705942973679,
+      "spinoza": 0.9748845186695229
+    },
+    "query_count": 1623,
+    "first_discovered": "2025-12-19T16:13:43.053039",
+    "promoted_to_seed": true
+  },
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.970 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.5447890168936884,
+    "philosopher_weights": {
+      "kant": 0.26240143027968504,
+      "hume": 0.63024318280088,
+      "locke": 0.31671290783405365,
+      "spinoza": 0.9697985466601353
+    },
+    "query_count": 761,
+    "first_discovered": "2025-12-19T16:13:43.101908",
+    "promoted_to_seed": true
+  }
+]

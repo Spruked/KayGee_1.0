@@ -1,0 +1,16 @@
+# .dockerignore for frontend
+node_modules
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+.env
+.env.*
+dist
+build
+.vscode
+.DS_Store
+Thumbs.db
+.next
+.turbo

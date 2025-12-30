@@ -1,0 +1,13 @@
+# KayGee 1.0 Frontend Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY Kay_Gee_1.0/frontend/package*.json ./
+RUN npm install --legacy-peer-deps --force
+
+COPY Kay_Gee_1.0/frontend .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]

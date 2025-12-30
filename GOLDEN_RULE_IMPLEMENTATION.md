@@ -345,7 +345,7 @@ And then **she speaks**.
 
 ## Commit Hash
 
-**Implementation:** c:\dev\Desktop\KayGee_1.0\ai_companion\main.py  
+**Implementation:** c:\dev\Desktop\KayGee_1.0\Kay_Gee_1.0\main.py  
 **Lines Modified:** 6 major sections  
 **Lines Added:** ~90 (commit_response method)  
 **Vetoes Removed:** 3  

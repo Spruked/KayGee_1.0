@@ -1,7 +1,0 @@
-{
-  "model_name": "tts_models/multilingual/multi-dataset/xtts_v2",
-  "output_path": "output_voice.wav",
-  "language": "en",
-  "use_voice_cloning": true,
-  "reference_audio": "reference_voice.wav"
-}

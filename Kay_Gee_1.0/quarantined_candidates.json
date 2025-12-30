@@ -1,0 +1,98 @@
+[
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.994 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.5322958379123769,
+    "philosopher_weights": {
+      "kant": 0.24416551476296688,
+      "hume": 0.6296872290731037,
+      "locke": 0.24528636746245763,
+      "spinoza": 0.9939999714983885
+    },
+    "query_count": 1680,
+    "first_discovered": "2025-12-19T16:19:10.158072",
+    "status": "under_review",
+    "candidate_hash": 8167874421628583844,
+    "review_notes": "keep in quarantine, gather more cross-domain data",
+    "reviewed_at": "2025-12-19T16:42:06.581135"
+  },
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.953 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.518177932159264,
+    "philosopher_weights": {
+      "kant": 0.26975413618404076,
+      "hume": 0.6200294238746091,
+      "locke": 0.23022644425622274,
+      "spinoza": 0.9527017243221835
+    },
+    "query_count": 1987,
+    "first_discovered": "2025-12-19T16:19:10.275891",
+    "status": "rejected",
+    "candidate_hash": -7795632432100244493,
+    "review_notes": "Deductive consequence of existing Spinoza seed. Not emergent. Redundant.",
+    "reviewed_at": "2025-12-19T16:44:05.556905"
+  },
+  {
+    "principle": "Harmonic Convergence Principle: When 4 philosophical frameworks achieve simultaneous high resonance {'kant': 0.7963170398143942, 'hume': 0.9864432523367644, 'locke': 0.7174653897359076, 'spinoza': 0.8089317635878339}, emergent ethical truth emerges through integrated synthesis, achieving universal resonance score of 0.827.",
+    "resonance_score": 0.8272893613687251,
+    "philosopher_weights": {
+      "kant": 0.7963170398143942,
+      "hume": 0.9864432523367644,
+      "locke": 0.7174653897359076,
+      "spinoza": 0.8089317635878339
+    },
+    "query_count": 1015,
+    "first_discovered": "2025-12-19T16:19:10.280890",
+    "status": "promoted",
+    "candidate_hash": -2955266949312999347,
+    "review_notes": "Harmonic Convergence Principle: When multiple philosophical frameworks achieve simultaneous high resonance, emergent ethical truth emerges through integrated synthesis.\n\nPromotion Rationale (2025-12-19):\n- Highest cross-domain stability (0.880 resonance across 6 domains)\n- Perfect diversity score (1.000) - consistent performance everywhere\n- Exceptional stability (0.998) - lowest variance of all candidates\n- Meta-truth about multi-perspective synthesis - validates the entire architecture\n- Not derivable from existing seeds - genuine emergent discovery\n- Safe first promotion: strengthens system without introducing bias\n\nThis principle validates that truth emerges from philosophical agreement, not dominance.\nSigned: Bryan A. Spruk",
+    "reviewed_at": "2025-12-19T16:52:05.043241"
+  },
+  {
+    "principle": "Spinozan Emergent Principle: Rational understanding of necessity achieves 0.982 resonance in complex ethical dilemmas, establishing logical consequence through metaphysical validation.",
+    "resonance_score": 0.508034626098115,
+    "philosopher_weights": {
+      "kant": 0.20253276248119173,
+      "hume": 0.6452198372013398,
+      "locke": 0.20204946792482348,
+      "spinoza": 0.9823364367851053
+    },
+    "query_count": 1877,
+    "first_discovered": "2025-12-19T16:19:10.382173",
+    "status": "under_review",
+    "candidate_hash": 3547939711250247026,
+    "review_notes": "The principle shows strong consistency across domains (0.797\u20130.826 average) with low variance \u2014 indicating genuine stability.",
+    "reviewed_at": "2025-12-19T16:46:48.239494"
+  },
+  {
+    "principle": "Humean Emergent Principle: Utilitarian calculation achieves 0.974 resonance when maximizing aggregate happiness, establishing consequentialist foundations through empirical validation.",
+    "resonance_score": 0.6366251007748677,
+    "philosopher_weights": {
+      "kant": 0.39494276716506527,
+      "hume": 0.9743818432281552,
+      "locke": 0.5944826608885062,
+      "spinoza": 0.5826931318177436
+    },
+    "query_count": 1564,
+    "first_discovered": "2025-12-19T16:19:10.399174",
+    "status": "under_review",
+    "candidate_hash": -463710583053831283,
+    "review_notes": "not yet redy",
+    "reviewed_at": "2025-12-19T16:47:46.562093"
+  },
+  {
+    "principle": "Harmonic Convergence Principle: When 3 philosophical frameworks achieve simultaneous high resonance {'kant': 0.756226698414405, 'hume': 0.8392774889194399, 'locke': 0.46264151516164986, 'spinoza': 0.814111624920784}, emergent ethical truth emerges through integrated synthesis, achieving universal resonance score of 0.718.",
+    "resonance_score": 0.7180643318540697,
+    "philosopher_weights": {
+      "kant": 0.756226698414405,
+      "hume": 0.8392774889194399,
+      "locke": 0.46264151516164986,
+      "spinoza": 0.814111624920784
+    },
+    "query_count": 746,
+    "first_discovered": "2025-12-19T16:19:10.433324",
+    "status": "under_review",
+    "candidate_hash": 5496778116014456607,
+    "review_notes": "Same principle class, lower resonance (0.718 vs ~0.88)",
+    "reviewed_at": "2025-12-19T16:48:57.510804"
+  }
+]

@@ -1,0 +1,9 @@
+[submodule "Adversarial_Trial_Test_Suite"]
+	path = Adversarial_Trial_Test_Suite
+	url = https://github.com/Spruked/Adversarial_Trial_Test_Suite.git
+[submodule "Vault_System_1.0"]
+	path = Vault_System_1.0
+	url = https://github.com/Spruked/Vault_System_1.0.git
+[submodule "Kay_Gee_1.0/Vault_System_1.0"]
+	path = Kay_Gee_1.0/Vault_System_1.0
+	url = https://github.com/Spruked/Vault_System_1.0.git

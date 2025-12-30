@@ -1,0 +1,20 @@
+  [Prolog] Loaded: src/reasoning/kant.pl
+  [Prolog] Loaded: src/reasoning/locke.pl
+  [Prolog] Loaded: src/reasoning/spinoza.pl
+  [Prolog] Loaded: src/reasoning/hume.pl
+  [Prolog] Loaded: src/reasoning/master_kg.pl
+Failed to initialize reasoning: 'MockHandshake' object has no attribute 'create_identity'
+Traceback (most recent call last):
+  File "C:\dev\Desktop\KayGee_1.0\Kay_Gee_1.0\emergent_truth_engine.py", line 404, in <module>
+    main()
+  File "C:\dev\Desktop\KayGee_1.0\Kay_Gee_1.0\emergent_truth_engine.py", line 392, in main
+    engine = EmergentTruthEngine()
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\dev\Desktop\KayGee_1.0\Kay_Gee_1.0\emergent_truth_engine.py", line 76, in __init__
+    self._bootstrap_philosophers()
+  File "C:\dev\Desktop\KayGee_1.0\Kay_Gee_1.0\emergent_truth_engine.py", line 103, in _bootstrap_philosophers
+    print(f'\u2713 Bootstrapped {name}: {principle[:50]}...')
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>
