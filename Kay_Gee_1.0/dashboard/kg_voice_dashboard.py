@@ -21,7 +21,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Local TTS (Coqui) - replaced by audio bridge
+# Local voice stack (Kokoro primary, Edge backup) via audio bridge
 try:
     from backend.audio_streaming_bridge import audio_processor
     HAS_AUDIO_BRIDGE = True
@@ -29,14 +29,7 @@ try:
 except Exception as e:
     print(f"Audio bridge not available: {e}")
     HAS_AUDIO_BRIDGE = False
-    # Fallback to direct TTS
-    try:
-        from TTS.api import TTS
-        tts = TTS(model_name="tts_models/en/jenny/jenny", progress_bar=False, gpu=False)
-        HAS_TTS = True
-    except Exception as e:
-        print(f"Coqui TTS not available: {e}")
-        HAS_TTS = False
+HAS_TTS = HAS_AUDIO_BRIDGE
 
 # Local Speech Recognition (faster-whisper) - now in audio bridge
 HAS_STT = HAS_AUDIO_BRIDGE
@@ -77,8 +70,9 @@ def listen_loop():
             
             if HAS_AUDIO_BRIDGE:
                 # Use audio bridge for transcription
-                result = audio_processor.process_audio_chunk(audio_bytes)
-                text = result.get('transcript', '')
+                import asyncio
+                result = asyncio.run(audio_processor.process_audio_chunk(audio_bytes))
+                text = result.get('text', '')
                 confidence = result.get('confidence', 0.0)
                 
                 if text and len(text) > 3 and confidence > 0.5:
@@ -127,7 +121,7 @@ class VoiceDashboard:
                 print(f"⚠️  KayGee initialization failed: {e}")
 
     def speak(self, text):
-        """Speak text through audio bridge or fallback TTS"""
+        """Speak text through the audio bridge."""
         print(f"\n💬 KayGee speaking: {text}")
         
         if HAS_AUDIO_BRIDGE:
@@ -175,39 +169,7 @@ class VoiceDashboard:
                 print(f"⚠️  Audio bridge synthesis error: {e}")
                 print(f"KayGee says: {text}")
         else:
-            # Fallback to direct TTS
-            if not HAS_TTS:
-                print(f"KayGee says: {text}")
-                return
-            
-            try:
-                wav = "temp_kaygee.wav"
-                tts.tts_to_file(text=text, file_path=wav)
-                
-                # Play audio (same as above)
-                try:
-                    import pygame
-                    pygame.mixer.init()
-                    pygame.mixer.music.load(wav)
-                    pygame.mixer.music.play()
-                    while pygame.mixer.music.get_busy():
-                        time.sleep(0.1)
-                except ImportError:
-                    import os
-                    if sys.platform == "win32":
-                        os.system(f"start /min {wav}")
-                    elif sys.platform == "darwin":
-                        os.system(f"afplay {wav}")
-                    else:
-                        os.system(f"aplay {wav}")
-                    time.sleep(2)
-                
-                self.last_spoken = text
-                Path(wav).unlink(missing_ok=True)
-                
-            except Exception as e:
-                print(f"⚠️  TTS error: {e}")
-                print(f"KayGee says: {text}")
+            print(f"KayGee says: {text}")
 
     def process_user_input(self, user_text):
         """Process user input through real KayGee system or generate mock response"""

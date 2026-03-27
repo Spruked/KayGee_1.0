@@ -42,7 +42,7 @@ try:
     sys.path.insert(0, str(parent_dir / 'Kay_Gee_1.0' / 'api' / 'backend'))
     from audio_streaming_bridge import audio_processor
     AUDIO_SYSTEM_AVAILABLE = True
-    print("✅ Bio-inspired audio system loaded (Cochlear + POM)")
+    print("✅ Bio-inspired audio system loaded (ACP + Kokoro/Edge)")
 except ImportError as e:
     print(f"⚠️  Audio system not available: {e}")
     AUDIO_SYSTEM_AVAILABLE = False

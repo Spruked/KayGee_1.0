@@ -149,7 +149,7 @@ class CochlearProcessorV3:
         """If confidence is too low, trigger re-synthesis with clearer voice"""
         print(f"🔄 Correction triggered: '{wrong}' → '{right}'")
         
-        # Notify any registered callbacks (could trigger POM re-synthesis)
+        # Notify any registered callbacks (can trigger voice re-synthesis)
         for callback in self.correction_callbacks:
             callback(wrong, right)
     

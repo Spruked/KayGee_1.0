@@ -38,8 +38,8 @@ python dashboard.py
 ## Step 4: Test Voice (Optional - 5 minutes)
 
 ```powershell
-# Install voice dependencies (one-time, large download)
-pip install TTS faster-whisper pygame sounddevice numpy
+# Install voice dependencies
+pip install edge-tts faster-whisper pygame sounddevice numpy
 
 # Run voice dashboard
 python dashboard\kg_voice_dashboard.py
@@ -103,8 +103,8 @@ Voice is optional - dashboard works without it
 
 **kg_voice_dashboard.py**
 - ✅ Full voice interface
-- ✅ Speech-to-text (Whisper)
-- ✅ Text-to-speech (Coqui)
+- ✅ Speech-to-text (Whisper baseline)
+- ✅ Text-to-speech (Kokoro primary, Edge fallback)
 - ✅ Real KayGee processing
 
 ---

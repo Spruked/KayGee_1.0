@@ -15,13 +15,9 @@ librosa>=0.9.0
 soundfile>=0.10.0
 audioread>=3.0.0
 
-# POM Dependencies (CPU-only)
-# TTS with CPU-only PyTorch
-torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
-torchaudio>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
-TTS>=0.22.0
-sounddevice>=0.4.4
-pydub>=0.25.1
+# Voice Stack (Kokoro primary, Edge fallback, Whisper baseline)
+edge-tts>=6.1.12
+faster-whisper>=1.1.1
 
 # Configuration
 pyyaml>=6.0

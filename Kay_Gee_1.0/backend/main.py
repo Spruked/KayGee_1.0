@@ -5,14 +5,18 @@ Single-file FastAPI server with all required endpoints
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import asyncio
 import json
 import time
 import random
+import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from voice_stack import VoiceStack
 
 # ========== SETTINGS ==========
 API_PORT = 8000
@@ -28,6 +32,17 @@ CORS_ORIGINS = [
 # ========== DATA MODELS ==========
 class SpeakRequest(BaseModel):
     text: str
+
+
+class TTSRequest(BaseModel):
+    text: str
+    voice: Optional[str] = None
+
+
+class STTRequest(BaseModel):
+    audio_base64: Optional[str] = None
+    audio_path: Optional[str] = None
+    language: Optional[str] = None
 
 class QueryHistoryItem(BaseModel):
     id: str
@@ -333,6 +348,8 @@ async def generate_decision_support(options: List[Any], constraints: Dict[str, A
 query_history_store: List[QueryHistoryItem] = []
 websocket_connections: List[WebSocket] = []
 system_logs = []
+logger = logging.getLogger("kaygee.backend")
+voice_stack = VoiceStack(runtime_dir=Path(__file__).parent / "runtime_voice")
 
 # ========== FASTAPI APP ==========
 app = FastAPI(
@@ -368,11 +385,11 @@ async def speak(request: SpeakRequest):
     
     # Smart responses based on keywords
     text_lower = request.text.lower()
-    if "pom" in text_lower or "voice" in text_lower:
+    if "voice" in text_lower or "tts" in text_lower or "acp" in text_lower:
         response_text = (
-            "For POM 2.0 voice integration, I recommend using the formant_filter module for narrator optimization "
-            "and larynx_sim for character voice consistency. The phonatory modules are actively processing your "
-            "GOAT audiobook requirements. Skeptic module confirms logical consistency."
+            "Voice stack is running Kokoro TTS as primary with Edge neural fallback. "
+            "Inbound speech goes through ACP preprocessing and Whisper-baseline transcription. "
+            "Plugin endpoints are active for cross-system routing."
         )
         confidence = 0.91
         reasoning_path = ["perception", "skeptic_check", "knowledge_retrieval", "synthesis", "articulation"]
@@ -477,7 +494,7 @@ async def api_interact(request: Dict[str, Any]):
         "timestamp": time.time()
     })
     
-    return {
+    response_payload = {
         "response": response_text,
         "text": response_text,  # For compatibility
         "confidence": confidence,
@@ -486,6 +503,16 @@ async def api_interact(request: Dict[str, Any]):
         "processing_time_ms": processing_time_ms,
         "reasoning_path": ["perceive", "analyze", "synthesize", "respond"]
     }
+
+    if request.get("voice_response"):
+        try:
+            tts = await voice_stack.synthesize(text=response_text, voice=request.get("voice"))
+            response_payload["audio_url"] = f"/audio/{tts.file_path.name}"
+            response_payload["audio_engine"] = tts.engine
+        except Exception as exc:
+            response_payload["audio_error"] = str(exc)
+
+    return response_payload
 
 @app.get("/api/cognitive/status")
 async def get_cognitive_status():
@@ -612,6 +639,79 @@ async def get_recent_logs(lines: int = 50, level: str = "", component: str = "")
     """Get recent system logs with optional filtering"""
     filters = {"level": level, "component": component} if level or component else {}
     return {"logs": generate_logs(lines, filters)}
+
+
+@app.get("/api/audio/diagnostics")
+async def get_audio_diagnostics():
+    """Inspect runtime configuration for ACPHub, Kokoro/Edge, and Whisper fallback."""
+    return voice_stack.diagnostics()
+
+
+@app.get("/audio/{filename}")
+async def download_audio(filename: str):
+    """Serve generated voice output files."""
+    safe_name = Path(filename).name
+    target = voice_stack.audio_dir / safe_name
+    if not target.exists() or not target.is_file():
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    media = "audio/wav" if target.suffix.lower() == ".wav" else "audio/mpeg"
+    return FileResponse(str(target), media_type=media, filename=safe_name)
+
+
+@app.post("/plugin/tts")
+async def plugin_tts(request: TTSRequest):
+    """Generate speech with ACPHub routing and Kokoro/Edge fallback."""
+    text = request.text.strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="Text input required")
+
+    result = await voice_stack.synthesize(text=text, voice=request.voice)
+    await broadcast_message(
+        {
+            "type": "plugin_tts",
+            "timestamp": datetime.now().isoformat(),
+            "data": {
+                "engine": result.engine,
+                "file": result.file_path.name,
+            },
+        }
+    )
+
+    return {
+        "status": "success",
+        "engine": result.engine,
+        "audio_url": f"/audio/{result.file_path.name}",
+        "mime_type": result.mime_type,
+    }
+
+
+@app.post("/plugin/stt")
+async def plugin_stt(request: STTRequest):
+    """Transcribe speech using ACPHub routing with Whisper safety fallback."""
+    audio_path: Optional[Path] = None
+
+    if request.audio_path:
+        audio_path = Path(request.audio_path)
+    elif request.audio_base64:
+        audio_path = voice_stack.decode_base64_audio(request.audio_base64, suffix=".wav")
+
+    if not audio_path:
+        raise HTTPException(status_code=400, detail="Provide audio_path or audio_base64")
+    if not audio_path.exists():
+        raise HTTPException(status_code=400, detail="Audio path does not exist")
+
+    result = voice_stack.transcribe(audio_path=audio_path, language=request.language)
+    await broadcast_message(
+        {
+            "type": "plugin_stt",
+            "timestamp": datetime.now().isoformat(),
+            "data": {
+                "engine": result.get("engine"),
+                "confidence": result.get("confidence"),
+            },
+        }
+    )
+    return {"status": "success", "result": result}
 
 # ========== PLUGIN ENDPOINTS ==========
 

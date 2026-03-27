@@ -301,6 +301,24 @@ export const KayGeeOrb: React.FC = () => {
     }
   }, [voiceEnabled]);
 
+  // Prefer backend-generated audio (ACPHub/Kokoro/Edge) when available.
+  const playServerAudio = useCallback(async (audioUrl?: string): Promise<boolean> => {
+    if (!voiceEnabled || !audioUrl) return false;
+    try {
+      const API_BASE = (import.meta as any).env.VITE_API_URL || 'http://localhost:8001';
+      const normalized = audioUrl.startsWith('http')
+        ? audioUrl
+        : `${API_BASE}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`;
+      const audio = new Audio(normalized);
+      audio.volume = 0.8;
+      await audio.play();
+      return true;
+    } catch (err) {
+      console.warn('Backend audio playback failed, falling back to browser voice:', err);
+      return false;
+    }
+  }, [voiceEnabled]);
+
   // Dim orb when giving user space (latent visibility), brighten otherwise
   useEffect(() => {
     try {
@@ -333,6 +351,7 @@ export const KayGeeOrb: React.FC = () => {
     const emotion = (data.emotion ?? data.mood ?? 'neutral') as string;
     const confidence = (data.confidence ?? data.stats?.confidence ?? 0.6) as number;
     const responseText = (data.response ?? data.text ?? '') as string;
+    const responseAudioUrl = (data.audio_url ?? '') as string;
 
     // Dispatch event for space field to react
     window.dispatchEvent(new CustomEvent('api-response', {
@@ -341,7 +360,12 @@ export const KayGeeOrb: React.FC = () => {
 
     // Speak the returned text if present
     if (responseText) {
-      try { setTimeout(() => speak(responseText), 200); } catch {}
+      try {
+        setTimeout(async () => {
+          const played = await playServerAudio(responseAudioUrl);
+          if (!played) speak(responseText);
+        }, 200);
+      } catch {}
     }
 
     const colorHex = mapEmotionToHex(emotion);
@@ -379,7 +403,11 @@ export const KayGeeOrb: React.FC = () => {
       const resp = await fetch(`${API_BASE}/api/interact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({
+          text,
+          voice_enabled: voiceEnabled,
+          voice: 'af_bella'
+        })
       });
       if (!resp.ok) throw new Error('API not responding');
       const data = await resp.json();

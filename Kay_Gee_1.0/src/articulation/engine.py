@@ -1,7 +1,7 @@
 """
 ArticulationEngine
 Turns structured decisions into natural, personality-tuned language
-Ready for Coqui TTS output
+Ready for Kokoro TTS output (Edge fallback)
 """
 
 import random

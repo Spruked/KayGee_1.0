@@ -86,6 +86,7 @@ import time
 import queue
 import json
 import sys
+import asyncio
 from pathlib import Path
 from datetime import datetime
 
@@ -96,12 +97,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 print("🎤 Initializing voice systems...")
 
 try:
-    from TTS.api import TTS
-    tts = TTS(model_name="tts_models/en/jenny/jenny", progress_bar=False, gpu=False)
+    from backend.audio_streaming_bridge import audio_processor
     HAS_TTS = True
-    print("  ✅ TTS ready (Coqui Jenny)")
+    print("  ✅ TTS ready (Kokoro primary / Edge backup)")
 except Exception as e:
-    print(f"  ⚠️  TTS not available: {e}")
+    print(f"  ⚠️  TTS bridge not available: {e}")
     HAS_TTS = False
 
 try:
@@ -211,10 +211,8 @@ def kaygee_speak(text: str):
     
     try:
         print(f"\n💬 KayGee: {text}")
-        wav_path = "temp_kaygee.wav"
-        
-        # Generate speech
-        tts.tts_to_file(text=text, file_path=wav_path)
+        synth = asyncio.run(audio_processor.voice.synthesize(text=text))
+        wav_path = str(synth.file_path)
         
         # Play audio
         try:

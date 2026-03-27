@@ -3,7 +3,7 @@
 KayGee 1.0 is a next-generation, bio-inspired cognitive presence and dashboard. It integrates:
 - **Cognitive Resonance**: Real-time phase coherence and resonance metrics
 - **Symbolic Cognition**: 3D space field visualizer (complex phasor math)
-- **Audio System**: (Planned) Cochlear and POM voice modules
+- **Audio System**: ACP hearing path + Kokoro-first voice stack with Edge backup
 - **Philosophical Balance**: Dynamic metrics inspired by Kant, Hume, Locke, Spinoza
 - **Technical Metrics**: Deep system state, integrity, and live conversation
 
