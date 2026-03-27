@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { KayGeeDashboard } from './components/Dashboard';
+import { KayGeeOrb } from './components/Orb';
 import logo from '../../logo.svg';
 import './index.css';
 
@@ -27,6 +28,17 @@ function App() {
   );
 }
 
+function OrbOnlyApp() {
+  return (
+    <ChakraProvider>
+      <KayGeeOrb />
+    </ChakraProvider>
+  );
+}
+
 // CRITICAL: Create root and mount
 const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(<App />);
+const isOrbOnly =
+  typeof window !== 'undefined' &&
+  window.location.pathname.replace(/\/+$/, '') === '/orb-only';
+root.render(isOrbOnly ? <OrbOnlyApp /> : <App />);

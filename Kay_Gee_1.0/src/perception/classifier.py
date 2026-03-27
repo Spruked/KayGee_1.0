@@ -252,7 +252,7 @@ class PerceptionSystem(IdentityBoundComponent):
         """Hook called after identity assignment"""
         import logging
         logger = logging.getLogger(__name__)
-        logger.info(f"✓ Perception identity assigned: {self.identity.fingerprint}")
+        logger.info(f"[OK] Perception identity assigned: {self.identity.fingerprint}")
     
     def get_state_hash(self) -> str:
         """Compute deterministic state hash for drift detection - includes state nonce"""

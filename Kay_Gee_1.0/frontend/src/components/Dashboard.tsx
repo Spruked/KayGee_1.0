@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import {
   Box, VStack, HStack, Text, Button, Textarea, useToast,
   Stat, StatLabel, StatNumber, StatHelpText, StatArrow,
@@ -18,7 +18,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { orbLearningGraph } from '../lib/OrbLearningGraph';
 import { PresenceStore } from '../store/presenceStore';
 import { KayGeeOrb } from './Orb';
-import { useWebSocket } from '../hooks/useWebSocket';
+import { useWebSocket, type WebSocketMessage } from '../hooks/useWebSocket';
 
 // Types
 interface CognitiveComponent {
@@ -76,12 +76,6 @@ interface QueryHistoryItem {
   reasoning_depth: number;
 }
 
-interface WSMessage {
-  type: 'cognitive_update' | 'trial_complete' | 'log_entry' | 'health_alert';
-  data: any;
-  timestamp: number;
-}
-
 // Store
 interface DashboardStore {
   queryHistory: QueryHistoryItem[];
@@ -106,12 +100,6 @@ const useDashboardStore = create<DashboardStore>()(
 );
 
 // API Client
-declare global {
-  interface ImportMeta {
-    env: Record<string, string>;
-  }
-}
-
 const API_BASE = (import.meta as any).env.VITE_API_URL || 'http://localhost:8001';
 
 const apiClient = {
@@ -273,7 +261,7 @@ export function KayGeeDashboard() {
   // KayGeeOrb is rendered below
 
   const wsUrl = API_BASE.replace(/^http/, 'ws') + '/ws';
-  const { isConnected } = useWebSocket(wsUrl, useCallback((msg: WSMessage) => {
+  const { isConnected } = useWebSocket(wsUrl, useCallback((msg: WebSocketMessage) => {
     switch (msg.type) {
       case 'cognitive_update':
         queryClient.setQueryData(['cognitiveStatus'], msg.data.cognitive_status);
@@ -329,9 +317,6 @@ export function KayGeeDashboard() {
   // UI controls
   const [hidePhilosophers, setHidePhilosophers] = useState(true);
   const [presenceState, setPresenceState] = useState(PresenceStore.get());
-  const [selectedSummary, setSelectedSummary] = useState<string | null>(null);
-  const [summaryContent, setSummaryContent] = useState<string>('');
-
   useEffect(() => {
     // Subscribe to PresenceStore updates if available
     const unsub = PresenceStore.subscribe ? PresenceStore.subscribe(() => {
@@ -766,6 +751,7 @@ export function KayGeeDashboard() {
                           URL.revokeObjectURL(url);
                           toast({ title: 'Results exported', status: 'success' });
                         }}>Export Results</Button>
+                      </HStack>
                     </HStack>
 
                     {trials && trials.length > 0 ? (

@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, VStack, HStack, Text, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Button, Badge } from '@chakra-ui/react';
 
-declare global {
-  interface ImportMeta {
-    env: Record<string, string>;
-  }
-}
-
 const API_BASE = (import.meta as any).env.VITE_API_URL || 'http://localhost:8001';
 
 interface SpaceFieldParams {

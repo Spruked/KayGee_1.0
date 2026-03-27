@@ -12,6 +12,9 @@ import json
 import time
 import random
 import logging
+import os
+import sys
+import importlib.util
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -350,6 +353,162 @@ websocket_connections: List[WebSocket] = []
 system_logs = []
 logger = logging.getLogger("kaygee.backend")
 voice_stack = VoiceStack(runtime_dir=Path(__file__).parent / "runtime_voice")
+STRICT_REAL_MODE = os.getenv("KAYGEE_STRICT_REAL", "1").strip() == "1"
+_real_cognition_system: Any = None
+_real_cognition_error: Optional[str] = None
+
+
+def _load_real_cognition_system() -> Any:
+    """Load the canonical KayGee cognition system from project root main.py."""
+    global _real_cognition_system, _real_cognition_error
+    if _real_cognition_system is not None:
+        return _real_cognition_system
+    if _real_cognition_error:
+        return None
+
+    try:
+        project_root = Path(__file__).resolve().parents[1]
+        main_path = project_root / "main.py"
+        if not main_path.exists():
+            raise RuntimeError(f"Missing core main.py at {main_path}")
+
+        if str(project_root) not in sys.path:
+            sys.path.insert(0, str(project_root))
+
+        spec = importlib.util.spec_from_file_location("kaygee_core_main", str(main_path))
+        if spec is None or spec.loader is None:
+            raise RuntimeError("Unable to create import spec for KayGee core")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        core_cls = getattr(module, "VaultedReasonerSystem", None)
+        if core_cls is None:
+            raise RuntimeError("VaultedReasonerSystem class not found in KayGee core")
+
+        _real_cognition_system = core_cls()
+        logger.info("Loaded real KayGee cognition system from root main.py")
+    except Exception as exc:
+        _real_cognition_error = str(exc)
+        logger.error("Failed to load real KayGee cognition system: %s", exc)
+        return None
+    return _real_cognition_system
+
+
+def _run_real_interaction(text: str) -> Dict[str, Any]:
+    """Execute a real cognition turn with no synthetic fallback text."""
+    system = _load_real_cognition_system()
+    if system is None:
+        raise RuntimeError(_real_cognition_error or "Real cognition system unavailable")
+
+    verdict = system.process_interaction(text)
+    response_text = str(verdict.get("text") or verdict.get("answer") or "").strip()
+    if not response_text:
+        raise RuntimeError("Real cognition returned empty response")
+
+    try:
+        confidence = float(verdict.get("confidence", 0.0))
+    except Exception:
+        confidence = 0.0
+    confidence = max(0.0, min(1.0, confidence))
+
+    resonance = max(0.2, min(0.98, confidence if confidence > 0 else 0.5))
+    if confidence >= 0.9:
+        emotion = "focused"
+    elif confidence >= 0.75:
+        emotion = "calm"
+    elif confidence >= 0.5:
+        emotion = "curious"
+    else:
+        emotion = "concerned"
+
+    reasoning_path = verdict.get("cascade_path") or verdict.get("reasoning_path") or ["perceive", "reason", "articulate"]
+    if not isinstance(reasoning_path, list):
+        reasoning_path = ["perceive", "reason", "articulate"]
+
+    return {
+        "response": response_text,
+        "text": response_text,
+        "confidence": confidence,
+        "emotion": emotion,
+        "resonance": resonance,
+        "reasoning_path": reasoning_path,
+        "philosophical_basis": verdict.get("philosophical_basis"),
+        "provenance": verdict.get("provenance"),
+    }
+
+
+def _real_component_snapshot(system: Any) -> Dict[str, Any]:
+    components: Dict[str, Any] = {}
+    component_map = {
+        "vaults": getattr(system, "vaults", None),
+        "reasoning": getattr(system, "reasoning_mgr", None),
+        "perception": getattr(system, "perception_mgr", None),
+        "articulation": getattr(system, "articulation_mgr", None),
+        "integrity": getattr(system, "integrity_mgr", None),
+    }
+    now_ts = time.time()
+    for name, comp in component_map.items():
+        initialized = bool(getattr(comp, "_initialized", False)) if comp is not None else False
+        components[name] = {
+            "initialized": initialized,
+            "status": {"mode": "active" if initialized else "unavailable"},
+            "last_update": now_ts,
+            "error_count": 0 if initialized else 1,
+            "confidence_score": 1.0 if initialized else 0.0,
+        }
+    return components
+
+
+def _real_cognitive_status() -> Dict[str, Any]:
+    system = _load_real_cognition_system()
+    if system is None:
+        raise RuntimeError(_real_cognition_error or "Real cognition unavailable")
+    components = _real_component_snapshot(system)
+    initialized_count = sum(1 for c in components.values() if c["initialized"])
+    return {
+        "status": "online" if initialized_count == len(components) else "degraded",
+        "session_id": str(getattr(system, "session_id", "unknown")),
+        "interaction_count": int(getattr(system, "interaction_count", 0)),
+        "components": components,
+        "active_reasoning_threads": 1,
+        "memory_consolidation_queue": 0,
+        "timestamp": time.time(),
+    }
+
+
+def _real_health_status() -> Dict[str, Any]:
+    cognitive = _real_cognitive_status()
+    health_components: Dict[str, Any] = {}
+    for name, comp in cognitive["components"].items():
+        initialized = bool(comp.get("initialized"))
+        health_components[name] = {
+            "health_score": 1.0 if initialized else 0.0,
+            "healthy": initialized,
+            "latency_ms": 0,
+            "last_check": time.time(),
+            "circuit_breaker": "closed" if initialized else "open",
+        }
+
+    scores = [float(v["health_score"]) for v in health_components.values()] or [0.0]
+    overall = sum(scores) / len(scores)
+    return {
+        "overall_health": overall,
+        "components": health_components,
+        "timestamp": time.time(),
+        "trend": "stable",
+    }
+
+
+def _tail_log_lines(lines: int) -> List[str]:
+    log_file = Path(__file__).resolve().parents[1] / "Kay_Gee_1.0.log"
+    if not log_file.exists():
+        return []
+    try:
+        with log_file.open("r", encoding="utf-8", errors="replace") as handle:
+            all_lines = handle.readlines()
+        return [line.rstrip("\n") for line in all_lines[-max(1, lines):]]
+    except Exception:
+        return []
 
 # ========== FASTAPI APP ==========
 app = FastAPI(
@@ -379,33 +538,20 @@ async def root():
 async def speak(request: SpeakRequest):
     """Process query and return response with reasoning metadata"""
     start_time = time.time()
-    
-    # Simulate processing
-    await asyncio.sleep(random.uniform(0.3, 1.2))
-    
-    # Smart responses based on keywords
-    text_lower = request.text.lower()
-    if "voice" in text_lower or "tts" in text_lower or "acp" in text_lower:
-        response_text = (
-            "Voice stack is running Kokoro TTS as primary with Edge neural fallback. "
-            "Inbound speech goes through ACP preprocessing and Whisper-baseline transcription. "
-            "Plugin endpoints are active for cross-system routing."
-        )
-        confidence = 0.91
-        reasoning_path = ["perception", "skeptic_check", "knowledge_retrieval", "synthesis", "articulation"]
-        skeptic_checks = 2
-    else:
-        responses = [
-            "Processing through epistemic convergence matrix... Skeptic module verified logical consistency.",
-            "Multiple SKGs converged on solution with 94% confidence. Trace vault updated.",
-            "Memory consolidation queue updated. Active reasoning threads: 3",
-            "Reasoning depth: 5. Phase coherence: 0.92. Harmonic lock achieved.",
-            "Adversarial trial passed. Confidence calibrated. Ready for next query."
-        ]
-        response_text = random.choice(responses)
-        confidence = random.uniform(0.75, 0.95)
-        reasoning_path = ["perceive", "analyze", "synthesize", "validate"]
-        skeptic_checks = 1
+    try:
+        interaction = await asyncio.to_thread(_run_real_interaction, request.text)
+    except Exception as exc:
+        if STRICT_REAL_MODE:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Real KayGee cognition unavailable: {exc}",
+            ) from exc
+        raise HTTPException(status_code=500, detail=f"Interaction failed: {exc}") from exc
+
+    response_text = interaction["response"]
+    confidence = float(interaction.get("confidence", 0.0))
+    reasoning_path = interaction.get("reasoning_path", ["perceive", "reason", "articulate"])
+    skeptic_checks = 1
     
     processing_time_ms = (time.time() - start_time) * 1000
     
@@ -447,38 +593,20 @@ async def api_interact(request: Dict[str, Any]):
     text = request.get("text", "").strip()
     if not text:
         raise HTTPException(status_code=400, detail="Text input required")
-    
-    # Simulate processing
-    await asyncio.sleep(random.uniform(0.2, 0.8))
-    
-    # Generate response based on input
-    text_lower = text.lower()
-    
-    # Determine emotion based on content
-    if any(word in text_lower for word in ["hello", "hi", "greetings", "good morning"]):
-        emotion = "happy"
-        response_text = "Hello! I'm KayGee, your cognitive companion. How can I assist you today?"
-    elif any(word in text_lower for word in ["help", "assist", "support"]):
-        emotion = "focused"
-        response_text = "I'm here to help. I can analyze information, provide reasoning, or assist with decision-making. What would you like to explore?"
-    elif any(word in text_lower for word in ["status", "how are you", "system"]):
-        emotion = "calm"
-        response_text = "All cognitive systems are operational. Resonance levels stable at 87%. Ready for interaction."
-    elif any(word in text_lower for word in ["thank", "thanks", "appreciate"]):
-        emotion = "happy"
-        response_text = "You're welcome! I'm glad I could be of assistance."
-    else:
-        emotion = "curious"
-        responses = [
-            "Interesting query. Let me process that through my reasoning matrix.",
-            "Analyzing your input... Multiple cognitive pathways activated.",
-            "Processing through epistemic convergence... Skeptic modules engaged.",
-            "Your question has triggered deep reasoning analysis. Stand by for response."
-        ]
-        response_text = random.choice(responses)
-    
-    confidence = random.uniform(0.85, 0.98)
-    resonance = random.uniform(0.7, 0.95)
+    try:
+        interaction = await asyncio.to_thread(_run_real_interaction, text)
+    except Exception as exc:
+        if STRICT_REAL_MODE:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Real KayGee cognition unavailable: {exc}",
+            ) from exc
+        raise HTTPException(status_code=500, detail=f"Interaction failed: {exc}") from exc
+
+    response_text = interaction["response"]
+    confidence = float(interaction.get("confidence", 0.0))
+    emotion = str(interaction.get("emotion", "curious"))
+    resonance = float(interaction.get("resonance", 0.5))
     processing_time_ms = (time.time() - start_time) * 1000
     
     # Broadcast interaction to WebSocket clients
@@ -501,10 +629,12 @@ async def api_interact(request: Dict[str, Any]):
         "emotion": emotion,
         "resonance": resonance,
         "processing_time_ms": processing_time_ms,
-        "reasoning_path": ["perceive", "analyze", "synthesize", "respond"]
+        "reasoning_path": interaction.get("reasoning_path", ["perceive", "reason", "articulate"]),
+        "philosophical_basis": interaction.get("philosophical_basis"),
+        "provenance": interaction.get("provenance"),
     }
 
-    if request.get("voice_response"):
+    if request.get("voice_response") or request.get("voice_enabled"):
         try:
             tts = await voice_stack.synthesize(text=response_text, voice=request.get("voice"))
             response_payload["audio_url"] = f"/audio/{tts.file_path.name}"
@@ -517,16 +647,28 @@ async def api_interact(request: Dict[str, Any]):
 @app.get("/api/cognitive/status")
 async def get_cognitive_status():
     """Enhanced cognitive status for dashboard"""
+    if STRICT_REAL_MODE:
+        try:
+            return _real_cognitive_status()
+        except Exception as exc:
+            raise HTTPException(status_code=503, detail=f"Real cognitive status unavailable: {exc}") from exc
     return generate_cognitive_status()
 
 @app.get("/api/health/detailed")
 async def get_health_detailed():
     """Detailed health status for dashboard"""
+    if STRICT_REAL_MODE:
+        try:
+            return _real_health_status()
+        except Exception as exc:
+            raise HTTPException(status_code=503, detail=f"Real health status unavailable: {exc}") from exc
     return generate_health_status()
 
 @app.get("/api/health/history")
 async def get_health_history(range: str = "1h"):
     """Historical health data for trend charts"""
+    if STRICT_REAL_MODE:
+        raise HTTPException(status_code=501, detail="Historical health timeline is not implemented in strict real mode.")
     return generate_health_history(range)
 
 @app.get("/api/adversarial/trials")
@@ -546,13 +688,16 @@ async def get_adversarial_trials(limit: int = 50):
     except Exception as e:
         print(f"Failed to load adversarial results: {e}")
     
-    # Fallback to mock data
+    if STRICT_REAL_MODE:
+        return {"trials": []}
     return {"trials": generate_adversarial_trials(limit)}
 
 
 @app.post("/api/adversarial/run")
 async def run_adversarial(limit: int = 50):
     """Run an adversarial trial suite and persist results to adversarial_trial/results"""
+    if STRICT_REAL_MODE:
+        raise HTTPException(status_code=501, detail="Adversarial suite run is not wired to real execution in strict mode.")
     trials = generate_adversarial_trials(limit)
     results_dir = Path(__file__).parent.parent / "adversarial_trial" / "results"
     try:
@@ -616,6 +761,18 @@ async def get_adversarial_summary(filename: str):
 @app.post('/api/stabilize')
 async def stabilize_system():
     """Simulate a stabilization pulse for KayGee and broadcast improved status"""
+    if STRICT_REAL_MODE:
+        cognitive = _real_cognitive_status()
+        health = _real_health_status()
+        await broadcast_message(
+            {
+                "type": "cognitive_update",
+                "data": {"cognitive_status": cognitive, "health_status": health},
+                "timestamp": time.time(),
+            }
+        )
+        return {"status": "reported", "cognitive_status": cognitive, "health_status": health}
+
     stable_status = generate_cognitive_status()
     # Slightly boost component confidence to simulate stabilization
     for comp in stable_status.get('components', {}).values():
@@ -637,6 +794,8 @@ async def stabilize_system():
 @app.get("/api/logs/recent")
 async def get_recent_logs(lines: int = 50, level: str = "", component: str = ""):
     """Get recent system logs with optional filtering"""
+    if STRICT_REAL_MODE:
+        return {"logs": _tail_log_lines(lines)}
     filters = {"level": level, "component": component} if level or component else {}
     return {"logs": generate_logs(lines, filters)}
 
@@ -839,11 +998,13 @@ async def websocket_endpoint(websocket: WebSocket):
     print(f"WS client connected. Total clients: {len(websocket_connections)}")
     # Send initial burst
     try:
+        cognitive_status = _real_cognitive_status() if STRICT_REAL_MODE else generate_cognitive_status()
+        health_status = _real_health_status() if STRICT_REAL_MODE else generate_health_status()
         await websocket.send_json({
             "type": "cognitive_update",
             "data": {
-                "cognitive_status": generate_cognitive_status(),
-                "health_status": generate_health_status()
+                "cognitive_status": cognitive_status,
+                "health_status": health_status
             },
             "timestamp": time.time()
         })
@@ -865,18 +1026,22 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.on_event("startup")
 async def startup_event():
     """Start background broadcasting loop"""
-    print(f"🚀 KayGee Backend starting on port {API_PORT}...")
+    print(f"[START] KayGee Backend starting on port {API_PORT}...")
+    if STRICT_REAL_MODE:
+        _load_real_cognition_system()
     asyncio.create_task(broadcast_loop())
 
 async def broadcast_loop():
     """Broadcast status updates every 2 seconds"""
     while True:
         try:
+            cognitive_status = _real_cognitive_status() if STRICT_REAL_MODE else generate_cognitive_status()
+            health_status = _real_health_status() if STRICT_REAL_MODE else generate_health_status()
             await broadcast_message({
                 "type": "cognitive_update",
                 "data": {
-                    "cognitive_status": generate_cognitive_status(),
-                    "health_status": generate_health_status()
+                    "cognitive_status": cognitive_status,
+                    "health_status": health_status
                 },
                 "timestamp": time.time()
             })

@@ -132,7 +132,7 @@ class VaultedReasonerSystem:
     """
     
     def __init__(self, config_path="config.yaml"):
-        logger.info("🚀 Initializing Enhanced Vaulted Reasoner System...")
+        logger.info("[START] Initializing Enhanced Vaulted Reasoner System...")
         
         # Load configuration
         self.config = self._load_config(config_path)
@@ -176,7 +176,7 @@ class VaultedReasonerSystem:
         # INSTANT VERDICT BYPASS CACHE
         self.verdict_cache = {}  # query_hash -> cached_verdict
         
-        logger.info("✅ System initialized successfully")
+        logger.info("[OK] System initialized successfully")
     
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load configuration from YAML file"""
@@ -318,7 +318,7 @@ class VaultedReasonerSystem:
             normalized_verdict = normalize_response(verdict)
 
             # REAL ARTICULATION - Only renders, never decides
-            response_text = self.articulation_mgr.engine.render(normalized_verdict)
+            response_text = self.articulation_mgr.articulate(normalized_verdict)
 
             # Return real response
             return {
@@ -332,7 +332,7 @@ class VaultedReasonerSystem:
             }
 
         except Exception as e:
-            logger.error(f"❌ Fatal error in interaction #{self.interaction_count}: {e}")
+            logger.error(f"[ERROR] Fatal error in interaction #{self.interaction_count}: {e}")
             # No fallback - crash is honest
             raise
             
